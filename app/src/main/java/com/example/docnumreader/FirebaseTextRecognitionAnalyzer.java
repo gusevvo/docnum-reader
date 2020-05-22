@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.icu.util.ValueIterator;
 import android.media.Image;
 import android.util.Log;
 import android.widget.ImageView;
@@ -45,34 +46,23 @@ public class FirebaseTextRecognitionAnalyzer implements ImageAnalysis.Analyzer {
         int rotation = degreesToFirebaseRotation(imageProxy.getImageInfo().getRotationDegrees());
 
         Image image = imageProxy.getImage();
-//        Bitmap bmp = getBitmap(image);
-//
-//        int left = cropRectImageView.getLeft();
-//        int top = cropRectImageView.getTop();
-//        int width = cropRectImageView.getWidth();
-//        int height = cropRectImageView.getHeight();
-//
-//        Bitmap croped = null;
-//        try {
-//            croped = Bitmap.createBitmap(
-//                    bmp,
-//                    cropRectImageView.getLeft(), //x
-//                    cropRectImageView.getTop(),//y
-//                    cropRectImageView.getWidth(), //width
-//                    cropRectImageView.getHeight()  //height
-//            );
-//        } catch (Exception ex) {
-//            Log.e(TAG, "Ошибка распознование текста. Ошибк createBitmap", ex);
-//
-//        }
-
 
         FirebaseVisionImage firebaseVisionImage;
         FirebaseVisionTextRecognizer detector;
 
         try {
             firebaseVisionImage = FirebaseVisionImage.fromMediaImage(image, rotation);
-            //firebaseVisionImage = FirebaseVisionImage.fromBitmap(croped);
+            Bitmap bmp = firebaseVisionImage.getBitmap();
+            
+            Bitmap croped = Bitmap.createBitmap(
+                    bmp,
+                    cropRectImageView.getLeft(), //x
+                    cropRectImageView.getTop(),//y
+                    cropRectImageView.getWidth(), //width
+                    cropRectImageView.getHeight()  //height
+            );
+            
+            firebaseVisionImage = FirebaseVisionImage.fromBitmap(croped);
             detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
         } catch (Exception ex) {
             Log.e(TAG, "Ошибка распознование текста. Ошибка инициализации детектора", ex);
@@ -93,7 +83,7 @@ public class FirebaseTextRecognitionAnalyzer implements ImageAnalysis.Analyzer {
                                     Log.e(TAG, "Ошибка распознование текста. Ошибка обработки изображения", ex);
                                 });
 
-        image.close();
+        imageProxy.close();
     }
 
     private int degreesToFirebaseRotation(int degrees) {
@@ -112,7 +102,7 @@ public class FirebaseTextRecognitionAnalyzer implements ImageAnalysis.Analyzer {
         }
     }
 
-    private Bitmap getBitmap(Image image) {
+  /*  private Bitmap getBitmap(Image image) {
         Image.Plane[] planes = image.getPlanes();
         ByteBuffer yBuffer = planes[0].getBuffer();
         ByteBuffer uBuffer = planes[1].getBuffer();
@@ -130,9 +120,9 @@ public class FirebaseTextRecognitionAnalyzer implements ImageAnalysis.Analyzer {
 
         YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
+        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 100, out);
 
         byte[] imageBytes = out.toByteArray();
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-    }
+    }*/
 }
