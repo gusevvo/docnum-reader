@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -124,9 +125,13 @@ public class MainActivity extends AppCompatActivity {
                 .setTargetRotation(rotation)
                 .build();
 
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        previewView.getDisplay().getRealMetrics(metrics);
+
         imageAnalysis = new ImageAnalysis.Builder()
                 .setTargetRotation(rotation)
-                .setTargetResolution(new Size(720, 1280))
+                .setTargetResolution(new Size(metrics.widthPixels, metrics.heightPixels))
                 .build();
         imageAnalysis.setAnalyzer(cameraExecutor, new FirebaseTextRecognitionAnalyzer(this::onSuccess, cropRectImageView));
 
