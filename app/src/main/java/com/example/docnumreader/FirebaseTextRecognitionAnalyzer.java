@@ -1,11 +1,7 @@
 package com.example.docnumreader;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.graphics.YuvImage;
-import android.icu.util.ValueIterator;
 import android.media.Image;
 import android.util.Log;
 import android.widget.ImageView;
@@ -21,8 +17,6 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public class FirebaseTextRecognitionAnalyzer implements ImageAnalysis.Analyzer {
@@ -53,15 +47,24 @@ public class FirebaseTextRecognitionAnalyzer implements ImageAnalysis.Analyzer {
         try {
             firebaseVisionImage = FirebaseVisionImage.fromMediaImage(image, rotation);
             Bitmap bmp = firebaseVisionImage.getBitmap();
-            
+
+            Rect rect = new Rect();
+            cropRectImageView.getGlobalVisibleRect(rect);
+//
+//            int[] location = new int[2];
+//            cropRectImageView.getLocationOnScreen(location);
+//
+//            int[] wind = new int[2];
+//            cropRectImageView.getLocationInWindow(wind);
+
             Bitmap croped = Bitmap.createBitmap(
                     bmp,
-                    cropRectImageView.getLeft(), //x
-                    cropRectImageView.getTop(),//y
-                    cropRectImageView.getWidth(), //width
-                    cropRectImageView.getHeight()  //height
+                    rect.left, //x
+                    rect.top,//y
+                    rect.width(), //width
+                    rect.height()  //height
             );
-            
+
             firebaseVisionImage = FirebaseVisionImage.fromBitmap(croped);
             detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
         } catch (Exception ex) {

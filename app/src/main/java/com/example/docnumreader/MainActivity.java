@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
-import android.view.Surface;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,14 +119,17 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        int rotation = previewView.getDisplay().getRotation();
-        Preview preview = new Preview.Builder()
-                .setTargetRotation(rotation)
-                .build();
-
 
         DisplayMetrics metrics = new DisplayMetrics();
         previewView.getDisplay().getRealMetrics(metrics);
+        int rotation = previewView.getDisplay().getRotation();
+
+
+        Preview preview = new Preview.Builder()
+                .setTargetRotation(rotation)
+                .setTargetResolution(new Size(metrics.widthPixels, metrics.heightPixels))
+                .build();
+
 
         imageAnalysis = new ImageAnalysis.Builder()
                 .setTargetRotation(rotation)
