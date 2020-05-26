@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageAnalysis imageAnalysis;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
 
+    TesseractOcrAnalyzer tesseractOcrAnalyzer;
+
     /**
      * Blocking camera operations are performed using this executor
      */
@@ -56,12 +58,18 @@ public class MainActivity extends AppCompatActivity {
         if (cameraExecutor != null) {
             cameraExecutor.shutdown();
         }
+        if (tesseractOcrAnalyzer != null) {
+            tesseractOcrAnalyzer.onDestroy();
+        }
     }
 
     private void init() {
+
         textView = findViewById(R.id.text_view);
         cropRectImageView = findViewById(R.id.image_view_crop_rect);
         previewView = findViewById(R.id.preview_view);
+
+        tesseractOcrAnalyzer = new TesseractOcrAnalyzer(this::onSuccess, cropRectImageView, this);
 
         // Initialize background executor for ImageAnalysis
         cameraExecutor = Executors.newSingleThreadExecutor();
@@ -135,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTargetRotation(rotation)
                 .setTargetResolution(new Size(metrics.widthPixels, metrics.heightPixels))
                 .build();
-        imageAnalysis.setAnalyzer(cameraExecutor, new FirebaseTextRecognitionAnalyzer(this::onSuccess, cropRectImageView));
+        imageAnalysis.setAnalyzer(cameraExecutor, tesseractOcrAnalyzer);
 
         cameraProvider.unbindAll();
         try {

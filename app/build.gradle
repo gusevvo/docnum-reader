@@ -2,6 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+
+    ndkVersion = '21.0.6113669'
+
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
@@ -49,6 +52,9 @@ dependencies {
 
     // firebase ml-kit
     implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
+
+    // implementation of tesseract engine - "tess-two". see: https://github.com/rmtheis/tess-two
+    implementation 'com.rmtheis:tess-two:9.1.0'
 
 
     testImplementation 'junit:junit:4.13'
